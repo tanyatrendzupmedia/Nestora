@@ -8,8 +8,16 @@ const connectDB = async () => {
     return mongoose.connection;
   }
 
+  if (!process.env.MONGO_URI) {
+    const errorMsg = "CRITICAL: MONGO_URI environment variable is not set!";
+    console.error(errorMsg);
+    throw new Error(errorMsg);
+  }
+
   try {
-    const connection = await mongoose.connect(process.env.MONGO_URI);
+    const connection = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
     isConnected = true;
 
     console.log(

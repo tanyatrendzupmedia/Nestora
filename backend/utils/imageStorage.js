@@ -13,11 +13,17 @@ export const TEMP_UPLOADS_DIR = path.join(WORKSPACE_UPLOADS_DIR, "temp");
 
 // Ensure upload directories exist
 export const ensureUploadDirs = () => {
-  if (!fs.existsSync(WORKSPACE_UPLOADS_DIR)) {
-    fs.mkdirSync(WORKSPACE_UPLOADS_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(TEMP_UPLOADS_DIR)) {
-    fs.mkdirSync(TEMP_UPLOADS_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(WORKSPACE_UPLOADS_DIR)) {
+      fs.mkdirSync(WORKSPACE_UPLOADS_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(TEMP_UPLOADS_DIR)) {
+      fs.mkdirSync(TEMP_UPLOADS_DIR, { recursive: true });
+    }
+  } catch (err) {
+    // In serverless / read-only environments (like Vercel), local disk writes outside /tmp fail.
+    // We catch this gracefully so the server boots cleanly without crashing.
+    console.warn("Upload directories check skipped (read-only filesystem):", err.message);
   }
 };
 

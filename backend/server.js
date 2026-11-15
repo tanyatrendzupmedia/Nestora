@@ -78,6 +78,18 @@ app.get("/", (req, res) => {
 });
 
 // ----------------------------------
+// GLOBAL ERROR HANDLER
+// Ensures all errors return valid JSON instead of HTML
+// ----------------------------------
+app.use((err, req, res, next) => {
+  console.error("Unhandled API error:", err.message || err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "An unexpected server error occurred.",
+  });
+});
+
+// ----------------------------------
 // SERVER STARTUP (Local Dev Only)
 // On Vercel (production), Vercel invokes the exported `app` serverlessly.
 // In local development, app.listen() starts the persistent server.
