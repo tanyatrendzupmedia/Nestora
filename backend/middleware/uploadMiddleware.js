@@ -1,22 +1,9 @@
 import multer from "multer";
 import path from "path";
-import crypto from "crypto";
-import { TEMP_UPLOADS_DIR, ensureUploadDirs } from "../utils/imageStorage.js";
 
-ensureUploadDirs();
-
-// Disk storage for temporary incoming uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    ensureUploadDirs();
-    cb(null, TEMP_UPLOADS_DIR);
-  },
-  filename: (req, file, cb) => {
-    const uniqueId = crypto.randomUUID();
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `temp-${uniqueId}${ext}`);
-  },
-});
+// Memory storage buffers uploaded files in RAM so serverless runtimes
+// (like Vercel) never fail due to read-only local filesystems.
+const storage = multer.memoryStorage();
 
 // File filter strictly for image formats
 const fileFilter = (req, file, cb) => {

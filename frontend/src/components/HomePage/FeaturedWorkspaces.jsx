@@ -5,6 +5,7 @@ import {
   getFormattedPricingDisplay,
   getCategoryUnitLabel,
 } from "../../utils/pricingCalculator";
+import { getImageUrl } from "../../utils/imageHelper";
 
 /* ----------------------------------
    API CONFIGURATION
@@ -152,12 +153,7 @@ function normalizeWorkspace(workspace) {
     hourlyEnabled: pricingDisplay.hourlyEnabled,
     dailyEnabled: pricingDisplay.dailyEnabled,
     capacity: Number(workspace.capacity || 1),
-    image:
-      typeof firstImage === "string"
-        ? firstImage
-        : firstImage?.url ||
-          workspace.image ||
-          "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+    image: getImageUrl(firstImage || workspace.image),
     amenities: Array.isArray(workspace.amenities) ? workspace.amenities : [],
   };
 }

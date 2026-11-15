@@ -1,8 +1,10 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import heroImage from "../../assets/images/home/hero.avif"
 
 export default function Hero() {
+  const navigate = useNavigate();
   const [location, setLocation] = useState("");
   const [workspaceType, setWorkspaceType] = useState("Any workspace");
   const [date, setDate] = useState("");
@@ -21,16 +23,34 @@ export default function Hero() {
   function handleSearch(event) {
     event.preventDefault();
 
-    const params = new URLSearchParams({
-      location,
-      type: workspaceType,
-      date,
-      time,
-      duration,
-      guests,
-    });
+    const params = new URLSearchParams();
 
-    window.location.href = `/workspaces?${params.toString()}`;
+    if (location.trim()) {
+      params.set("location", location.trim());
+    }
+
+    if (workspaceType && workspaceType !== "Any workspace") {
+      params.set("type", workspaceType);
+    }
+
+    if (date) {
+      params.set("date", date);
+    }
+
+    if (time) {
+      params.set("time", time);
+    }
+
+    if (duration) {
+      params.set("duration", duration);
+    }
+
+    if (guests && guests !== "1") {
+      params.set("guests", guests);
+    }
+
+    const queryString = params.toString();
+    navigate(queryString ? `/workspaces?${queryString}` : "/workspaces");
   }
 
   return (
@@ -95,7 +115,6 @@ export default function Hero() {
                 onChange={(event) => setLocation(event.target.value)}
                 placeholder="City or neighbourhood"
                 className="w-full min-w-0 bg-transparent text-sm text-text-primary outline-none placeholder:text-text-secondary"
-                required
               />
             </label>
 
@@ -109,7 +128,6 @@ export default function Hero() {
                 value={date}
                 onChange={(event) => setDate(event.target.value)}
                 className="w-full min-w-0 bg-transparent text-sm text-text-secondary outline-none"
-                required
               />
             </label>
 
@@ -123,7 +141,6 @@ export default function Hero() {
                 value={time}
                 onChange={(event) => setTime(event.target.value)}
                 className="w-full min-w-0 bg-transparent text-sm text-text-secondary outline-none"
-                required
               />
             </label>
 
